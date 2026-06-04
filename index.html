@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jentzen Flaskerud, Salesforce and RevOps systems</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F6F3EC; --surface:#FFFFFF; --surface-2:#FBF8F1; --ink:#1E1B16; --muted:#5E594F; --faint:#928C80;
+    --line:#E6E1D6; --line-2:#D6D0C3; --accent:#946F22; --accent-soft:#F1EADB;
+    --serif:"Newsreader",Georgia,serif; --sans:"Hanken Grotesk",system-ui,sans-serif; --mono:"JetBrains Mono",monospace;
+    --max:1000px;
+  }
+  html[data-theme="dark"]{--bg:#15130F;--surface:#1C1915;--surface-2:#221E18;--ink:#ECE7DD;--muted:#A8A096;--faint:#6F695E;--line:#2C2822;--line-2:#3A352D;--accent:#CBA45A;--accent-soft:#262017}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 30px}
+  a{color:inherit;text-decoration:none}
+  ::selection{background:var(--accent);color:#1a160e}
+
+  nav{position:sticky;top:0;z-index:40;background:var(--bg);border-bottom:1px solid var(--line)}
+  .nav-in{max-width:var(--max);margin:0 auto;padding:15px 30px;display:flex;justify-content:space-between;align-items:center}
+  .brand{font-family:var(--mono);font-size:13px;letter-spacing:.4px}.brand b{color:var(--accent);font-weight:500}
+  .nav-r{display:flex;gap:9px;align-items:center}
+  .btn{font-family:var(--mono);font-size:12.5px;padding:9px 13px;border:1px solid var(--line-2);border-radius:8px;color:var(--muted);background:none;cursor:pointer;transition:.16s}
+  .btn:hover{border-color:var(--accent);color:var(--accent)}
+  .btn.fill{background:var(--accent);border-color:var(--accent);color:#1a160e;font-weight:500}
+  .btn.fill:hover{color:#1a160e;filter:brightness(1.06)}
+
+  header{padding:78px 0 56px;border-bottom:1px solid var(--line)}
+  h1{font-family:var(--serif);font-weight:500;font-size:clamp(40px,6.5vw,68px);line-height:1.04;letter-spacing:-.015em;max-width:16ch}
+  .role{margin-top:18px;font-family:var(--mono);font-size:13.5px;color:var(--accent);letter-spacing:.2px}
+  .intro{margin-top:24px;font-size:19px;color:var(--ink);max-width:60ch}
+  .intro + .intro{margin-top:14px;font-size:17px;color:var(--muted)}
+  .cta{margin-top:28px;display:flex;gap:11px;flex-wrap:wrap}
+  .meta{margin-top:22px;font-family:var(--mono);font-size:12.5px;color:var(--faint)}
+
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:46px;border-top:1px solid var(--line)}
+  @media(max-width:600px){.stats{grid-template-columns:1fr}}
+  .stat{padding:24px 24px 24px 0}
+  .stat:not(:last-child){border-right:1px solid var(--line);margin-right:24px}
+  @media(max-width:600px){.stat{border-right:none;margin-right:0;border-bottom:1px solid var(--line)}}
+  .stat .v{font-family:var(--serif);font-size:36px;line-height:1;color:var(--accent)}
+  .stat .l{margin-top:10px;font-size:13.5px;color:var(--muted);line-height:1.4}
+
+  section{padding:56px 0;border-bottom:1px solid var(--line)}
+  .lbl{font-family:var(--mono);font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--faint);margin-bottom:30px}
+
+  .work{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:680px){.work{grid-template-columns:1fr}}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:26px;transition:border-color .18s,transform .18s}
+  .card:hover{border-color:var(--line-2);transform:translateY(-3px)}
+  .card .kick{font-family:var(--mono);font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:var(--accent)}
+  .card h3{font-family:var(--serif);font-weight:500;font-size:22px;line-height:1.15;margin:9px 0 0}
+  .card .sub{font-family:var(--mono);font-size:11.5px;color:var(--faint);margin-top:6px}
+  .card p{margin-top:14px;font-size:15px;color:var(--muted)}
+  .card .out{margin-top:15px;padding-top:14px;border-top:1px solid var(--line);font-size:14.5px;color:var(--ink)}
+  .card .out b{color:var(--accent);font-weight:600}
+
+  .list .row{display:grid;grid-template-columns:240px 1fr;gap:24px;padding:17px 0;border-top:1px solid var(--line);align-items:baseline}
+  .list .row:first-child{border-top:none}
+  @media(max-width:640px){.list .row{grid-template-columns:1fr;gap:5px}}
+  .list .n{font-family:var(--serif);font-size:18px;font-weight:500}
+  .list p{color:var(--muted);font-size:15px}
+
+  .prose{font-size:17px;color:var(--muted);max-width:64ch}
+  .infl{margin-top:16px;font-family:var(--mono);font-size:12px;color:var(--faint);line-height:1.7}
+  .ladder{margin-top:20px;display:flex;flex-wrap:wrap;gap:9px;font-family:var(--mono);font-size:12px}
+  .rung{border:1px solid var(--line-2);border-radius:7px;padding:7px 12px;color:var(--muted)}
+  .rung.now{border-color:var(--accent);color:var(--accent)}
+
+  .cap .r{display:grid;grid-template-columns:180px 1fr;gap:24px;padding:15px 0;border-top:1px solid var(--line)}
+  .cap .r:first-child{border-top:none}
+  @media(max-width:620px){.cap .r{grid-template-columns:1fr;gap:4px}}
+  .cap .l{font-family:var(--mono);font-size:11.5px;letter-spacing:.5px;text-transform:uppercase;color:var(--faint);padding-top:2px}
+  .cap .d{font-size:15.5px;color:var(--ink)}
+  .certrow{margin-top:24px;font-size:15px;color:var(--muted)}
+  .certrow .h{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--faint);margin-bottom:7px}
+  .certrow .x{color:var(--faint)}
+
+  .end{padding:60px 0 30px}
+  .end h2{font-family:var(--serif);font-weight:500;font-size:clamp(26px,4vw,36px);max-width:20ch}
+  .end .row{margin-top:22px;display:flex;gap:11px;flex-wrap:wrap}
+  footer{padding:24px 0 60px;font-family:var(--mono);font-size:12px;color:var(--faint)}
+</style>
+</head>
+<body>
+<nav><div class="nav-in">
+  <div class="brand">JFlaskerud<b>Inc</b></div>
+  <div class="nav-r">
+    <button class="btn" onclick="toggleTheme()" id="ttg">Dark</button>
+    <a class="btn fill" href="Jentzen_Flaskerud_Resume.pdf" download>Resume (PDF)</a>
+  </div>
+</div></nav>
+
+<div class="wrap">
+  <header>
+    <h1>Jentzen Flaskerud</h1>
+    <div style="font-family:var(--mono);font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--faint);margin-top:12px">Portfolio</div>
+    <div class="role">Salesforce and RevOps Systems Solution Architect</div>
+    <p class="intro">I build the Salesforce systems that go-to-market teams run on. At Syncro I handle the architecture and integrations across our GTM and revenue systems, and I build AI tooling to help deliver and maintain the work.</p>
+    <div class="cta">
+      <a class="btn fill" href="mailto:jentzen@jflaskerudinc.com">Email me</a>
+      <a class="btn" href="Jentzen_Flaskerud_Resume.pdf" download>Download resume</a>
+      <a class="btn" href="https://www.linkedin.com/in/jentzenflaskerud/" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+    <div class="meta">Open to RevOps, business systems, and Salesforce architecture roles, full-time or consulting.</div>
+
+    <div class="stats">
+      <div class="stat"><div class="v">40%</div><div class="l">increase in revenue under contract after I built Syncro's first quote-to-cash process</div></div>
+      <div class="stat"><div class="v">2025</div><div class="l">won Most Impactful Project of the Year for that work</div></div>
+      <div class="stat"><div class="v">AI-native</div><div class="l">Built one of the earliest custom Salesforce MCP servers, giving AI secure access to the org, with a multi-agent dev team on top</div></div>
+    </div>
+  </header>
+
+  <section>
+    <div class="lbl">Selected work</div>
+    <div class="work">
+      <div class="card">
+        <div class="kick">Revenue systems</div>
+        <h3>First quote-to-cash process at Syncro</h3>
+        <div class="sub">Senior Salesforce Administrator, RevOps</div>
+        <p>Syncro didn't have a standard quote-to-cash process, so I designed and built one. I worked with sales, finance, and RevOps to agree on how it should work, then built it in Salesforce so it could take on new product lines later without a rebuild.</p>
+        <div class="out"><b>40% increase in revenue under contract.</b> Won Most Impactful Project of the Year, and I later extended it to new offerings.</div>
+      </div>
+      <div class="card">
+        <div class="kick">GTM systems</div>
+        <h3>Customer Journey Map and GTM overhaul</h3>
+        <div class="sub">Senior Salesforce Administrator, RevOps</div>
+        <p>Teams across the company defined the customer lifecycle differently, which made the systems and reporting inconsistent. My team built a company-wide Customer Journey Map to get everyone on the same definitions, and I led the work to rebuild Salesforce and the surrounding GTM systems around it.</p>
+        <div class="out">One agreed model and a cleaner data foundation, from first touch through expansion.</div>
+      </div>
+      <div class="card">
+        <div class="kick">AI tooling</div>
+        <h3>Salesforce MCP server and AI agents</h3>
+        <div class="sub">Senior Salesforce Administrator, RevOps</div>
+        <p>I built a custom MCP server early, before most companies had one, so AI tools can reach Salesforce data securely. On top of it I run a set of agents that diagnose issues and carry out Salesforce work in a sandbox, and I review and approve the output before anything ships.</p>
+        <div class="out">AI does the repetitive work; I stay in the loop on what reaches production.</div>
+      </div>
+      <div class="card">
+        <div class="kick">Consulting</div>
+        <h3>Pricing and contract redesign</h3>
+        <div class="sub">Independent consultant, for a Salesforce consultancy</div>
+        <p>I reworked the pricing and contract structure for a consultancy and built the Salesforce setup behind it. It gave the leadership team revenue forecasting they hadn't had before.</p>
+        <div class="out"><b>Record monthly recurring revenue</b> after the change.</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="lbl">Other work</div>
+    <div class="list">
+      <div class="row"><div class="n">AI fraud and spam detection</div><p>Built an AI tool that scans the web to flag spam and fraudulent leads, so the team spends less time qualifying them.</p></div>
+      <div class="row"><div class="n">AI metadata analyst</div><p>Built an AI tool that reads a Salesforce org and writes technical and business-process documentation from its metadata.</p></div>
+      <div class="row"><div class="n">Self-updating data dictionary</div><p>Catalogs every field with its definition, usage, automations, and dependencies, and keeps itself current so the team can see downstream impact.</p></div>
+      <div class="row"><div class="n">Data Cloud zero-copy</div><p>Connected Databricks data into Salesforce with zero-copy, so the data is available natively without copying or migrating it.</p></div>
+      <div class="row"><div class="n">Data-quality checks</div><p>Tooling that checks data integrity across the org and flags problems before they cause downstream issues.</p></div>
+      <div class="row"><div class="n">RevOps knowledge base</div><p>An internal knowledge base that answers process questions and updates itself as the org changes.</p></div>
+      <div class="row"><div class="n">Frontline Chrome extensions</div><p>Browser extensions that remove day-to-day friction for support, success, and sales reps.</p></div>
+      <div class="row"><div class="n">Survey scoring and screen flows</div><p>At Amatus Health: automated survey scoring, dynamic screen flows, and cross-object reporting for a healthcare provider.</p></div>
+      <div class="row"><div class="n">Org builds and cleanups</div><p>Built several Salesforce orgs from scratch and cleaned up others that had accumulated tech debt.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="lbl">How I work</div>
+    <p class="prose">I focus on the underlying cause of a problem rather than the symptom, because that is usually where it actually lives. I judge work by the impact it has on the business, not the volume of it. I build systems to be simple and loosely coupled so they are easy to change later, and I keep both the team and the systems healthy over time. Good systems and processes should let teams own their work and innovate without waiting on me. Most of what I build comes back to a few principles: clarity, simplicity, scalability, flexibility, and decoupling.</p>
+    <div class="infl">Books that shaped how I think: The Goal, The Phoenix Project, the DevOps Handbook, Outcomes Over Outputs, The Effective Executive, The Advantage, Good to Great.</div>
+  </section>
+
+
+  <section>
+    <div class="lbl">Capabilities</div>
+    <div class="cap">
+      <div class="r"><div class="l">AI tooling</div><div class="d">Custom MCP server development, multi-agent AI tooling and review, prompt engineering, RAG and knowledge bases, AI-augmented development across Apex, LWC, JavaScript and CSS (I architect, direct, and review), Claude Code and Cowork.</div></div>
+      <div class="r"><div class="l">Salesforce</div><div class="d">Sales Cloud, Service Cloud, Data Cloud (Data 360), Lightning Experience, SOQL, Flow, Dynamic Forms, declarative automation.</div></div>
+      <div class="r"><div class="l">Integration</div><div class="d">REST and SOAP APIs, Platform Events, event-driven architecture, custom webhooks, bidirectional integrations, zero-copy with Data 360.</div></div>
+      <div class="r"><div class="l">Data</div><div class="d">CRM and GTM systems architecture, data modeling and ERDs, data governance, data dictionaries, large data volumes.</div></div>
+      <div class="r"><div class="l">DevOps</div><div class="d">DevOps Center, CI/CD pipelines, Salesforce CLI, sandbox strategy, version control.</div></div>
+      <div class="r"><div class="l">With people</div><div class="d">Cross-functional alignment, stakeholder partnership, mentoring, vendor evaluation and selection.</div></div>
+    </div>
+    <div class="certrow">
+      <div class="h">Certifications</div>
+      Platform App Builder (2022), Certified Associate (2023), Process Automation Accredited Professional (2022), Administrator (2021, <span class="x">lapsed</span>), Data Architect (<span class="x">in progress</span>).
+    </div>
+  </section>
+
+  <div class="end">
+    <h2>If you're hiring for RevOps or systems work, send me a note.</h2>
+    <div class="row">
+      <a class="btn fill" href="mailto:jentzen@jflaskerudinc.com">jentzen@jflaskerudinc.com</a>
+      <a class="btn" href="Jentzen_Flaskerud_Resume.pdf" download>Resume (PDF)</a>
+      <a class="btn" href="https://www.linkedin.com/in/jentzenflaskerud/" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+  </div>
+</div>
+<footer><div class="wrap" style="padding:0 30px">Jentzen Flaskerud · jentzen@jflaskerudinc.com · Greenville, SC · Remote, United States</div></footer>
+
+<script>
+  (function(){var R=document.documentElement,K='jf-theme-a',ALT='dark',B=document.getElementById('ttg');
+   function lab(){B.textContent=(R.getAttribute('data-theme')==='dark')?'Light':'Dark';}
+   try{var s=localStorage.getItem(K);if(s)R.setAttribute('data-theme',s);}catch(e){}
+   window.toggleTheme=function(){var c=R.getAttribute('data-theme');if(c===ALT){R.removeAttribute('data-theme');try{localStorage.removeItem(K)}catch(e){}}else{R.setAttribute('data-theme',ALT);try{localStorage.setItem(K,ALT)}catch(e){}}lab();};lab();})();
+</script>
+</body>
+</html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
